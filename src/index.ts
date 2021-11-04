@@ -22,6 +22,12 @@ app.get('/devices', (req: Request, res: Response) => {
     .catch(err => res.status(500).send(err))
 })
 
+app.get('/devices/:id', async (req: Request, res: Response) => {
+    ttn.devices.get('pulu', req.params.id)
+    .then(device => res.json(device))
+    .catch(err => res.status(500).send(err))
+})
+
 app.listen(config.server.port, () => {
     console.log(`Listening on port ${config.server.port}`)
 })
