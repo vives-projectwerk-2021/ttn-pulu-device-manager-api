@@ -1,5 +1,5 @@
 {
-  "name": "ttn-pulu-device-manager",
+  "name": "ttn-pulu-device-manager-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
