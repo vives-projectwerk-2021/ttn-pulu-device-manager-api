@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express'
 import morgan from 'morgan'
 import config from './config'
-import ttn from './ttn'
+import pulu from './pulu'
 
 const app: Express = express()
 // use nice middleware logging for requests
@@ -17,13 +17,13 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.get('/devices', (req: Request, res: Response) => {
-    ttn.devices.list('pulu')
+    pulu.devices.list()
     .then(devices => res.json(devices))
     .catch(err => res.status(500).send(err))
 })
 
 app.get('/devices/:id', async (req: Request, res: Response) => {
-    ttn.devices.get('pulu', req.params.id)
+    pulu.devices.get(req.params.id)
     .then(device => res.json(device))
     .catch(err => res.status(500).send(err))
 })
