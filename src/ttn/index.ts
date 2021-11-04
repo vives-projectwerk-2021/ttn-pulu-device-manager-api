@@ -109,6 +109,47 @@ const ttn = {
                 .catch( err => reject(err) )
             })
         },
+        delete: (application_id: string, device_id: string) => {
+            function delete_in_identity_server(application_id: string, device_id: string) {
+                return new Promise<any>((resolve, reject) => {
+                    identity_server.delete(`/applications/${application_id}/devices/${device_id}`)
+                    .then( response => resolve(response.data) )
+                    .catch( err => reject(generate_error(err, 'identity_server')) )
+                })
+            }
+            function delete_in_join_server(application_id: string, device_id: string) {
+                return new Promise<any>((resolve, reject) => {
+                    join_server.delete(`/applications/${application_id}/devices/${device_id}`)
+                    .then( response => resolve(response.data) )
+                    .catch( err => reject(generate_error(err, 'join_server')) )
+                })
+            }
+            function delete_in_application_server(application_id: string, device_id: string) {
+                return new Promise<any>((resolve, reject) => {
+                    application_server.delete(`/applications/${application_id}/devices/${device_id}`)
+                    .then( response => resolve(response.data) )
+                    .catch( err => reject(generate_error(err, 'application_server')) )
+                })
+            }
+            function delete_in_network_server(application_id: string, device_id: string) {
+                return new Promise<any>((resolve, reject) => {
+                    network_server.delete(`/applications/${application_id}/devices/${device_id}`)
+                    .then( response => resolve(response.data) )
+                    .catch( err => reject(generate_error(err, 'network_server')) )
+                })
+            }
+
+            return new Promise<any>(async (resolve, reject) => {
+                Promise.all([
+                    delete_in_network_server(application_id, device_id),
+                    delete_in_application_server(application_id, device_id),
+                    delete_in_join_server(application_id, device_id),
+                    delete_in_identity_server(application_id, device_id)
+                ])
+                .then( () => resolve({success: true}) )
+                .catch( err => reject(err) )
+            })
+        }
     }
 }
 

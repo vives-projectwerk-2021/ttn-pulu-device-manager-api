@@ -43,6 +43,12 @@ app.post('/devices', async (req: Request, res: Response) => {
     .catch(err => res.status(500).send(err))
 })
 
+app.delete('/devices/:id', async (req: Request, res: Response) => {
+    pulu.devices.delete(req.params.id)
+    .then(status => res.json(status))
+    .catch(err => res.status(500).send(err))
+})
+
 app.listen(config.server.port, () => {
     console.log(`Listening on port ${config.server.port}`)
 })

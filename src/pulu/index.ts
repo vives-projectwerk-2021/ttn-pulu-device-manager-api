@@ -13,6 +13,9 @@ const pulu = {
             const end_device = ttn_end_device(props)
             return ttn.devices.create(end_device)
         },
+        delete: (device_id: string) => {
+            return ttn.devices.delete('pulu', device_id)
+        }
     }
 }
 
