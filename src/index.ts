@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express'
 import morgan from 'morgan'
 import config from './config'
+import ttn from './ttn'
 
 const app: Express = express()
 // use nice middleware logging for requests
@@ -13,6 +14,12 @@ app.get('/', (req: Request, res: Response) => {
         message: 'ttn pulu device manager',
         version: `v${process.env.npm_package_version}`
     })
+})
+
+app.get('/devices', (req: Request, res: Response) => {
+    ttn.devices.list('pulu')
+    .then(devices => res.json(devices))
+    .catch(err => res.status(500).send(err))
 })
 
 app.listen(config.server.port, () => {
