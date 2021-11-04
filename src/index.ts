@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from 'express'
 import morgan from 'morgan'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from './config'
 
 const app: Express = express()
 // use nice middleware logging for requests
@@ -16,7 +15,6 @@ app.get('/', (req: Request, res: Response) => {
     })
 })
 
-const port = process.env.PORT
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`)
+app.listen(config.server.port, () => {
+    console.log(`Listening on port ${config.server.port}`)
 })
