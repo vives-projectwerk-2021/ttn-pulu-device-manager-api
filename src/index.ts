@@ -2,6 +2,8 @@ import express, { Express, Request, Response } from 'express'
 import morgan from 'morgan'
 import config from './config'
 import pulu from './pulu'
+import { validate } from 'jsonschema'
+import { DeviceSchema } from './validators/devices'
 import { EndDevice_props } from './pulu/endDevice'
 
 const app: Express = express()
@@ -30,17 +32,26 @@ app.get('/devices/:id', async (req: Request, res: Response) => {
 })
 
 app.post('/devices', async (req: Request, res: Response) => {
-    const props: EndDevice_props = {
-        device_id: req.body.device_id,
-        name: req.body.name,
-        description: req.body.description,
-        dev_eui: req.body.dev_eui,
-        join_eui: req.body.app_eui,
-        app_key: req.body.app_key
+    const validation = validate(req.body, DeviceSchema.create)
+    if(!validation.valid) {
+        res.status(400).send({
+            message: 'Validation failed!',
+            details: validation.errors.map(e => e.stack)
+        })
     }
-    pulu.devices.create(props)
-    .then(device => res.status(201).json(device))
-    .catch(err => res.status(500).send(err))
+    else {
+        const props: EndDevice_props = {
+            device_id: req.body.device_id,
+            name: req.body.name,
+            description: req.body.description,
+            dev_eui: req.body.dev_eui,
+            join_eui: req.body.app_eui,
+            app_key: req.body.app_key
+        }
+        pulu.devices.create(props)
+        .then(device => res.status(201).json(device))
+        .catch(err => res.status(500).send(err))
+    }
 })
 
 app.delete('/devices/:id', async (req: Request, res: Response) => {
