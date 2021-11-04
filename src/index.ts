@@ -3,7 +3,7 @@ import morgan from 'morgan'
 import config from './config'
 import pulu from './pulu'
 import { validate } from 'jsonschema'
-import { DeviceSchema } from './validators/devices'
+import validation from './validation'
 import { EndDevice_props } from './pulu/endDevice'
 
 const app: Express = express()
@@ -26,17 +26,26 @@ app.get('/devices', (req: Request, res: Response) => {
 })
 
 app.get('/devices/:id', async (req: Request, res: Response) => {
-    pulu.devices.get(req.params.id)
-    .then(device => res.json(device))
-    .catch(err => res.status(500).send(err))
+    if(req.params.id.match(validation.properties.device_id.pattern))
+    {
+        pulu.devices.get(req.params.id)
+        .then(device => res.json(device))
+        .catch(err => res.status(500).send(err))
+    }
+    else {
+        res.status(400).send({
+            message: 'Validation failed!',
+            details: `${req.params.id} doesn't match the required pattern`
+        })
+    }
 })
 
 app.post('/devices', async (req: Request, res: Response) => {
-    const validation = validate(req.body, DeviceSchema.create)
-    if(!validation.valid) {
+    const body_validation = validate(req.body, validation.schemas.devices.create)
+    if(!body_validation.valid) {
         res.status(400).send({
             message: 'Validation failed!',
-            details: validation.errors.map(e => e.stack)
+            details: body_validation.errors.map(e => e.stack)
         })
     }
     else {
@@ -55,9 +64,18 @@ app.post('/devices', async (req: Request, res: Response) => {
 })
 
 app.delete('/devices/:id', async (req: Request, res: Response) => {
-    pulu.devices.delete(req.params.id)
-    .then(status => res.json(status))
-    .catch(err => res.status(500).send(err))
+    if(req.params.id.match(validation.properties.device_id.pattern))
+    {
+        pulu.devices.delete(req.params.id)
+        .then(status => res.json(status))
+        .catch(err => res.status(500).send(err))
+    }
+    else {
+        res.status(400).send({
+            message: 'Validation failed!',
+            details: `${req.params.id} doesn't match the required pattern`
+        })
+    }
 })
 
 app.listen(config.server.port, () => {
