@@ -26,9 +26,10 @@ app.get('/devices', (req: Request, res: Response) => {
 })
 
 app.get('/devices/:id', async (req: Request, res: Response) => {
+    const with_app_key = Object.keys(req.query).includes('app_key')
     if(req.params.id.match(validation.properties.device_id.pattern))
     {
-        pulu.devices.get(req.params.id)
+        pulu.devices.get(req.params.id, with_app_key)
         .then(device => res.json(device))
         .catch(err => res.status(500).send(err))
     }

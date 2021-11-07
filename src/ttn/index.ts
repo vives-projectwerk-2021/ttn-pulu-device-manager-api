@@ -43,16 +43,42 @@ const ttn = {
                 .catch( err => reject(generate_error(err, 'identity_server')) )
             })
         },
-        get: (application_id: string, device_id: string) => {
-            return new Promise<any>((resolve, reject) => {
-                identity_server.get(
-                    `/applications/${application_id}/devices/${device_id}`, 
-                    { 
-                        params: { field_mask: 'name,description' }
-                    }
-                )
-                .then( response => resolve(response.data) )
-                .catch( err => reject(generate_error(err, 'identity_server')) )
+        get: (application_id: string, device_id: string, with_app_key: boolean = false) => {
+            function get_device_info(application_id: string, device_id: string) {
+                return new Promise<any>((resolve, reject) => {
+                    identity_server.get(
+                        `/applications/${application_id}/devices/${device_id}`, 
+                        { 
+                            params: { field_mask: 'name,description' }
+                        }
+                    )
+                    .then( response => resolve(response.data) )
+                    .catch( err => reject(generate_error(err, 'identity_server')) )
+                })
+            }
+            function get_device_app_key(application_id: string, device_id: string) {
+                return new Promise<any>((resolve, reject) => {
+                    join_server.get(
+                        `/applications/${application_id}/devices/${device_id}`, 
+                        { 
+                            params: { field_mask: 'root_keys.app_key.key' }
+                        }
+                    )
+                    .then( response => resolve(response.data) )
+                    .catch( err => reject(generate_error(err, 'identity_server')) )
+                })
+            }
+            return new Promise<any>(async (resolve, reject) => {
+                Promise.all([
+                    get_device_info(application_id, device_id),
+                    with_app_key?get_device_app_key(application_id, device_id):null
+                ])
+                .then( (results) => {
+                    let result = {}
+                    results.forEach(x=>result = {...result, ...x})
+                    resolve(result)
+                })
+                .catch( err => reject(err) )
             })
         },
         create: (end_device: EndDevice) => {
