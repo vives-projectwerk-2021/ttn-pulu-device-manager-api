@@ -19,6 +19,10 @@ Get information about all registered pulu-devices
 
 Get information about a specific pulu-device
 
+### PUT /devices/:device_id
+
+Update the name and/or description of a registered device in The Things Network
+
 ### POST /devices
 
 Register a new pulu-device to The Things Network
