@@ -41,6 +41,28 @@ app.get('/devices/:id', async (req: Request, res: Response) => {
     }
 })
 
+app.put('/devices/:id', async (req: Request, res: Response) => {
+    const body_validation = validate(req.body, validation.schemas.devices.update)
+    if(!body_validation.valid) {
+        res.status(400).send({
+            message: 'Validation failed!',
+            details: body_validation.errors.map(e => e.stack)
+        })
+    }
+    else if(req.params.id.match(validation.properties.device_id.pattern))
+    {
+        pulu.devices.update(req.params.id, req.body)
+        .then(device => res.json(device))
+        .catch(err => res.status(500).send(err))
+    }
+    else {
+        res.status(400).send({
+            message: 'Validation failed!',
+            details: `${req.params.id} doesn't match the required pattern`
+        })
+    }
+})
+
 app.post('/devices', async (req: Request, res: Response) => {
     const body_validation = validate(req.body, validation.schemas.devices.create)
     if(!body_validation.valid) {

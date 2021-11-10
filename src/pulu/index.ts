@@ -9,6 +9,9 @@ const pulu = {
         get: (device_id: string, with_app_key: boolean = false) => {
             return ttn.devices.get('pulu', device_id, with_app_key)
         },
+        update: (device_id: string, options: {name?: string, description?: string}) => {
+            return ttn.devices.update('pulu', device_id, options)
+        },
         create: (props: EndDevice_props) => {
             const end_device = ttn_end_device(props)
             return ttn.devices.create(end_device)

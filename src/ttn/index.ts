@@ -81,6 +81,22 @@ const ttn = {
                 .catch( err => reject(err) )
             })
         },
+        update: (application_id: string, device_id: string, options: {name?: string, description?: string}) => {
+            const end_device: any = {}
+            if(options.name) end_device.name = options.name
+            if(options.description) end_device.description = options.description
+            return new Promise<any>((resolve, reject) => {
+                identity_server.put(
+                    `/applications/${application_id}/devices/${device_id}`,
+                    {
+                        end_device,
+                        field_mask: { paths: Object.keys(end_device) }
+                    }
+                )
+                .then( response => resolve(response.data) )
+                .catch( err => reject(generate_error(err, 'identity_server')) )
+            })
+        },
         create: (end_device: EndDevice) => {
             function create_in_identity_server(end_device: EndDevice) {
                 return new Promise<any>((resolve, reject) => {

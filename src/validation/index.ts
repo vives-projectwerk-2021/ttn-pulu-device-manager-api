@@ -2,6 +2,19 @@ import properties from "./properties"
 
 const schemas = {
     devices: {
+        update: {
+            "type": "object",
+            "properties": {
+                "name": properties.name,
+                "description": properties.description
+            },
+            "anyOf": [
+                { "required": ["name"] },
+                { "required": ["description"] },
+                { "required": ["name", "description"] },
+            ],
+            "additionalProperties": false
+        },
         create: {
             "type": "object",
             "properties": {
