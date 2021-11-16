@@ -20,6 +20,19 @@ const schemas = {
             "properties": {
                 "device_id": properties.device_id,
                 "name": properties.name,
+                "description": properties.description
+            },
+            "required": [
+                "device_id",
+                "name"
+            ],
+            "additionalProperties": false
+        },
+        create_custom: {
+            "type": "object",
+            "properties": {
+                "device_id": properties.device_id_custom,
+                "name": properties.name,
                 "dev_eui": properties.dev_eui,
                 "app_eui":properties.app_eui,
                 "app_key": properties.app_key,

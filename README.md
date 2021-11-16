@@ -25,7 +25,17 @@ Update the name and/or description of a registered device in The Things Network
 
 ### POST /devices
 
-Register a new pulu-device to The Things Network
+Register a new pulu-device to The Things Network (with keys based on device_id)
+
+- required JSON properties:
+  - device_id
+  - name
+- optional JSON properties:
+  - description
+
+### POST /devices/custom
+
+Register a new pulu-device to The Things Network (with custom keys)
 
 - required JSON properties:
   - device_id

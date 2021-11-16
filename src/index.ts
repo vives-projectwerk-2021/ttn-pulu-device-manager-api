@@ -5,6 +5,7 @@ import pulu from './pulu'
 import { validate } from 'jsonschema'
 import validation from './validation'
 import { EndDevice_props } from './pulu/endDevice'
+import { generate_keys_from_device_id } from './key_generator'
 
 const app: Express = express()
 // use nice middleware logging for requests
@@ -65,6 +66,30 @@ app.put('/devices/:id', async (req: Request, res: Response) => {
 
 app.post('/devices', async (req: Request, res: Response) => {
     const body_validation = validate(req.body, validation.schemas.devices.create)
+    if(!body_validation.valid) {
+        res.status(400).send({
+            message: 'Validation failed!',
+            details: body_validation.errors.map(e => e.stack)
+        })
+    }
+    else {
+        const keys = generate_keys_from_device_id(req.body.device_id)
+        const props: EndDevice_props = {
+            device_id: req.body.device_id,
+            name: req.body.name,
+            description: req.body.description,
+            dev_eui: keys.dev_eui,
+            join_eui: keys.app_eui,
+            app_key: keys.app_key
+        }
+        pulu.devices.create(props)
+        .then(device => res.status(201).json(device))
+        .catch(err => res.status(500).send(err))
+    }
+})
+
+app.post('/devices/custom', async (req: Request, res: Response) => {
+    const body_validation = validate(req.body, validation.schemas.devices.create_custom)
     if(!body_validation.valid) {
         res.status(400).send({
             message: 'Validation failed!',

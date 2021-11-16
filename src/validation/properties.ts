@@ -1,6 +1,11 @@
 export default {
   device_id: {
     type: "string",
+    pattern: "^([a-z0-9]){24}$",
+  },
+
+  device_id_custom: {
+    type: "string",
     pattern: "^[a-z0-9](?:[-]?[a-z0-9]){2,35}$",
   },
 
