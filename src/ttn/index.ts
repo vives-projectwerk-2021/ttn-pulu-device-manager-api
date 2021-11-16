@@ -159,7 +159,7 @@ const ttn = {
                     create_in_join_server(end_device)
                 ])
                 .then( () => {
-                    ttn.devices.get(end_device.ids.application_ids.application_id, end_device.ids.device_id)
+                    ttn.devices.get(end_device.ids.application_ids.application_id, end_device.ids.device_id, true)
                     .then( device => resolve(device) )
                     .catch( err => reject(err) )
                 })
