@@ -8,4 +8,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["ts-node", "src/index.ts"]
+CMD ["npm", "run", "start"]
