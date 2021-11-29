@@ -6,12 +6,14 @@ import { validate } from 'jsonschema'
 import validation from './validation'
 import { EndDevice_props } from './pulu/endDevice'
 import { generate_keys_from_device_id } from './key_generator'
+import cors from 'cors'
 
 const app: Express = express()
 // use nice middleware logging for requests
 app.use(morgan('combined'))
 // enable application/json parsing
 app.use(express.json())
+app.use(cors())
 
 app.get('/', (req: Request, res: Response) => {
     res.send({
